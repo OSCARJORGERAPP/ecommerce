@@ -1,7 +1,7 @@
 # 🎬 Guion del video de entrega — 5:00 min
 
-> Tres secuencias: **funcionamiento** (0:00–2:30), **código** (2:30–4:15) y
-> **cierre** (4:15–5:00). Tiempos orientativos; ensayar con cronómetro.
+> Tres secuencias: **funcionamiento** (0:00–2:30), **código** (2:30–4:00) y
+> **reflexión final** (4:00–5:00). Tiempos orientativos; ensayar con cronómetro.
 
 ## Preparación (antes de grabar)
 
@@ -53,7 +53,7 @@ Credenciales a mano: admin `admin@ecommerce.dev` / `admin123` · tarjeta `4242 4
 
 ---
 
-## SECUENCIA 2 — Código (2:30 – 4:15)
+## SECUENCIA 2 — Código (2:30 – 4:00)
 
 ### 2:30–2:50 · Definición y stack (VS Code: `README.md`)
 - Mostrar el README con el diagrama.
@@ -69,28 +69,31 @@ Credenciales a mano: admin `admin@ecommerce.dev` / `admin123` · tarjeta `4242 4
 - Expandir `lib/`: db, jwt, auth, format, products, stripe.
 > "Los route groups organizan los layouts por rol. La lógica testeable vive en **`lib/` como funciones puras** — dinero, transiciones de pedido, validación, JWT — y las API Routes solo validan, autorizan y persisten. Detalle heredado de proyectos anteriores: los clientes de Mongo y Stripe son **lazy** para que `next build` no falle en el runner de CI sin variables de entorno."
 
-### 3:40–3:55 · Tests (terminal)
+### 3:40–3:50 · Tests (terminal)
 - Ejecutar `npm test` en vivo (~1 s).
-> "**25 tests en verde**: unitarios — céntimos, transiciones de estado, JWT con tokens manipulados, validación del CRUD — e **integración real contra MongoDB**: índice único de email, upsert del carrito, idempotencia del webhook. Se saltan limpiamente si no hay BD, como en el runner de CI. Cada requisito funcional tiene al menos un test."
+> "**25 tests en verde**: unitarios — céntimos, transiciones de estado, JWT con tokens manipulados — e **integración real contra MongoDB**: índice único de email, carrito, idempotencia del webhook con descuento de stock. Cada requisito funcional tiene al menos un test."
 
-### 3:55–4:15 · CI y white-label (navegador: GitLab · VS Code: `lib/brand.ts`)
-- Mostrar el pipeline verde en GitLab y el `.gitlab-ci.yml`.
-> "Sincronizado en **GitHub y GitLab**. El pipeline usa los templates de la academia y construye la imagen con el **Dockerfile multi-stage standalone** en el runner de Cloud Run — la configuración vino **resuelta de la retrospectiva de proyectos anteriores**: verde al primer intento. Y la marca es **parametrizable**: nombre, lema, domicilio, email y WhatsApp por variables de entorno — la misma imagen Docker sirve para varias empresas."
+### 3:50–4:00 · CI y white-label (navegador: GitLab · VS Code: `lib/brand.ts`)
+- Mostrar el pipeline verde en GitLab.
+> "Sincronizado en **GitHub y GitLab**; el pipeline construye la imagen con el **Dockerfile multi-stage standalone** en el runner de Cloud Run — **verde al primer intento**, con la configuración heredada de la retrospectiva de proyectos anteriores. Y la marca es **white-label**: nombre, lema y contacto por variables de entorno — la misma imagen sirve para varias empresas."
 
 ---
 
-## SECUENCIA 3 — Cierre (4:15 – 5:00)
+## SECUENCIA 3 — Reflexión final (4:00 – 5:00)
 
-*(VS Code: `RETROSPECTIVA.md` abierto)*
+*(VS Code: `REFLEXION-FINAL.md` abierto; ir haciendo scroll por sección)*
 
-### 4:15–4:35 · Decisiones que funcionaron
-> "Tres decisiones clave. **Céntimos como enteros** en todo el sistema — Stripe usa la misma unidad, así que no hay ni una conversión con decimales. **Webhook más verificación de respaldo**: el pago se confirma aunque el webhook no llegue en local, y ambos caminos son idempotentes. Y **arrancar con las lecciones heredadas**: la retrospectiva de bonos y videocapture se registró **antes de escribir código** — el CI salió verde a la primera y los tests de integración no repitieron los errores conocidos de Vitest."
+### 4:00–4:20 · Decisiones que funcionaron (§Decisiones)
+> "Cierro con lo más saliente de la reflexión final. Tres decisiones dieron el resultado esperado. **Céntimos como enteros** en todo el sistema: Stripe usa la misma unidad, así que no hay ni una sola conversión con decimales en el flujo de dinero. **Webhook más verificación de respaldo sobre la misma función idempotente** — `markOrderPaid` —: el pago se confirma aunque el webhook no llegue, y los reintentos no duplican efectos: el carrito se vacía y el stock se descuenta exactamente una vez. Y **auth artesanal como decisión didáctica consciente**: ver la sesión por dentro, asumiendo que en producción real usaría una solución auditada."
 
-### 4:35–4:50 · Deuda técnica, dicha honestamente
-> "Deuda asumida: el descuento de stock ocurre **al pagar, sin reserva previa** — dos compradores simultáneos del último artículo podrían pagar ambos; lo correcto sería reservar stock al crear la sesión de checkout. Un **checkout abandonado** deja el pedido pendiente hasta que el admin lo cancela; debería expirar con la sesión de Stripe. Y falta la **prueba de carga** de 50 concurrentes que fija la especificación."
+### 4:20–4:35 · Deuda técnica asumida (scroll a §Deuda técnica)
+> "Deuda, dicha honestamente: el stock se descuenta **al pagar, sin reserva previa** — dos compradores simultáneos del último artículo podrían pagar ambos; lo correcto sería reservar al crear la sesión de checkout. Los **checkouts abandonados** dejan pedidos pendientes que hoy cancela el admin; deberían expirar con la sesión de Stripe. Y falta la **prueba de carga** de 50 concurrentes que fija la especificación."
 
-### 4:50–5:00 · Aprendizaje + cierre
-> "El aprendizaje más valioso no fue de código sino de método: **documentar cada incidente como problema-causa-solución** convierte los errores en infraestructura reutilizable — este proyecto se construyó más rápido gracias a los anteriores. Los 14 requisitos implementados, probados y documentados. Gracias."
+### 4:35–4:50 · Aprendizajes (scroll a §Aprendizajes)
+> "Tres aprendizajes. El principal es de **método**: documentar cada incidente como problema-causa-solución convierte los errores en infraestructura reutilizable — este proyecto arrancó con el CI ya resuelto desde bonos y videocapture, y salió verde a la primera. De **Next 16**: rompe lo aprendido — `proxy.ts` en vez de middleware, `params` asíncronos — y la documentación embarcada en `node_modules` es la fuente fiable. Y una trampa de infraestructura: **`localhost` eran dos servidores** — un Mongo nativo en IPv4 y otro en Docker en IPv6 sobre el mismo puerto; fijar `127.0.0.1` explícito eliminó la ambigüedad."
+
+### 4:50–5:00 · Qué haría distinto · cierre (scroll a §Qué haría distinto)
+> "¿Qué haría distinto? **Reserva de stock desde el día uno** — retrofitear inventario es más caro —, métricas y health check junto con la primera route, y convertir la verificación manual del flujo completo en un **test de Playwright**. En resumen: los 14 requisitos implementados, probados y documentados, con la especificación como contrato. Gracias."
 
 ---
 
@@ -108,7 +111,9 @@ Credenciales a mano: admin `admin@ecommerce.dev` / `admin123` · tarjeta `4242 4
 | 2:50 | Arquitectura + flujo de pago |
 | 3:15 | Estructura: route groups, proxy, lib/ |
 | 3:40 | Tests en vivo |
-| 3:55 | CI verde + white-label |
-| 4:15 | Cierre: decisiones |
-| 4:35 | Cierre: deuda técnica |
-| 4:50 | Aprendizaje + gracias |
+| 3:50 | CI verde + white-label |
+| 4:00 | Reflexión: decisiones que funcionaron |
+| 4:20 | Reflexión: deuda técnica |
+| 4:35 | Reflexión: aprendizajes |
+| 4:50 | Qué haría distinto · gracias |
+n
