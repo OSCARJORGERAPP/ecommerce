@@ -97,7 +97,7 @@ evitar errores de coma flotante; solo se formatea al mostrar.
 | `README.md` | Visión general, instalación, arranque, arquitectura resumida | ✅ |
 | `QUICKSTART.md` | De cero a corriendo en < 5 min | ✅ |
 | `RETROSPECTIVA.md` | Bitácora problema → causa → solución | ✅ (con lecciones CI heredadas) |
-| `REFLEXION-FINAL.md` | Cierre: logros, decisiones, deuda técnica | 🟡 stub |
+| `REFLEXION-FINAL.md` | Cierre: logros, decisiones, deuda técnica | ✅ |
 | Tests automatizados | ≥1 por RF; unitarios + integración | ✅ (25 tests) |
 | Seed de datos | `scripts/seed.ts` (RF-14) | ✅ |
 | `.env.example` | Plantilla de variables de entorno | ✅ |
