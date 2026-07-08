@@ -38,7 +38,8 @@ Ver [QUICKSTART.md](QUICKSTART.md) (camino mínimo) o [AGENTS.md](AGENTS.md) (de
 ```bash
 npm install
 docker run -d --name ecommerce-mongo -p 27017:27017 mongo:7
-cp .env.example .env.local   # rellenar claves de Stripe
+cp -n .env.example .env.local   # rellenar claves de Stripe (-n: no sobrescribir si ya existe)
+# PowerShell: if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
 npm run seed                 # productos de ejemplo + admin (admin@ecommerce.dev / admin123)
 npm run dev
 ```

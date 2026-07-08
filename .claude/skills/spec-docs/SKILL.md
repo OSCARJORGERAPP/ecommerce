@@ -284,6 +284,31 @@ PROMPT.md §5/§8 y AGENTS.md deben cubrir **como mínimo**:
   interior centrado (no `mx-auto` directamente en elementos semánticos).
 - [ ] Tras correr la skill, resumir al usuario qué falta del manifiesto.
 
+## ⚠️ CI en gitlab.codecrypto.academy (OBLIGATORIO antes de escribir `.gitlab-ci.yml`)
+
+Restricciones **reales** de la infraestructura de la academia, ya sufridas y
+resueltas en proyectos previos (bonos/videocapture/ecommerce). Incluir esta
+sección en el `AGENTS.md` generado y respetarla al crear el pipeline:
+
+1. Pipeline basado en los templates compartidos `internos/templates-cicd`
+   (opt-in), p. ej. `provision-mongo.yml` + `build-deploy.yml`.
+2. **Único runner operativo**: `cloudrun-ephemeral` (tag `cloudrun`), executor
+   **shell** — ignora `image:` (no hay Alpine ni `apk`). Solo funciona el job
+   `build` (usa `buildah`), que requiere **Dockerfile multi-stage standalone**
+   (en Next.js: `output: "standalone"` en `next.config.ts`). Jobs sin tag
+   `cloudrun` se quedan en `pending` para siempre.
+3. **`wake_cloudrun_runners` / `provision_*` / `deploy` desactivados con
+   `rules: when: never`** — con `allow_failure: true` el pipeline queda
+   "passed with warnings", no verde limpio.
+4. **No cachear `node_modules/` y a la vez pasarlo como artifacts**: cuelga los
+   jobs. Cachear solo `.npm/`. Poner `timeout:` explícito por job
+   (build 15m, lint/test 10m).
+5. El código debe aceptar variables locales (`MONGODB_URI`) **y** las de
+   plataforma (`MONGO_HOST`/`MONGO_PORT`/`MONGO_USER`/`MONGO_PASSWORD`/`MONGO_DB`).
+6. Síntoma "no runners online" → no es un bug del repo: escalar al admin
+   pidiendo `docker system prune -f` + reinicio del runner, citando el
+   precedente `video`/`videocapture`.
+
 ## Repositorios y subida del proyecto
 Una vez probado el proyecto y validado que el pipeline CI/CD pasa, los tests pasan
 al 100%, el build genera artefactos sin errores y todos los entregables están

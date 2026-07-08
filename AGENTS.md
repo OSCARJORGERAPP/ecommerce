@@ -20,7 +20,11 @@ npm install mongodb jose bcryptjs stripe
 npm install -D vitest tsx @types/bcryptjs
 
 # 3. Variables de entorno
-cp .env.example .env.local   # y rellenar valores (claves de test de Stripe)
+cp -n .env.example .env.local   # -n obligatorio: NO sobrescribir un .env.local existente
+# PowerShell (cp/Copy-Item no tiene -n):
+#   if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
+# (si ya existe, contiene las claves reales de Stripe — machacarlo las pierde;
+#  hay backup en C:\Users\ojrap\ecommerce.env.local.backup)
 ```
 
 ## 🗄️ Servicios locales (Docker)

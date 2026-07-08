@@ -72,4 +72,10 @@ Otras lecciones no-CI heredadas de `bonos/RETROSPECTIVA.md` que aplican a este s
 - **Solución**: fijar `MONGODB_URI=mongodb://127.0.0.1:27017` (IPv4 explícito) en `.env.local`/`.env.example`.
 - **Prevención**: en Windows, comprobar `Get-NetTCPConnection -LocalPort 27017 -State Listen` si los datos "desaparecen"; con un servicio MongoDB nativo instalado, no hace falta el contenedor Docker de Mongo.
 
+### 2026-07-08 — Las claves de Stripe "desaparecían" de `.env.local` entre sesiones
+- **Problema**: al retomar el proyecto tras cerrar VSCode, `.env.local` volvía a tener los placeholders (`sk_test_...`) y había que buscar de nuevo las claves.
+- **Causa**: no era VSCode — la guía de instalación (AGENTS.md/QUICKSTART/README) decía `cp .env.example .env.local`, que **sobrescribe** el archivo si ya existe. Al repetirse el paso de setup en una sesión nueva, machacaba las claves reales (`.env.local` está gitignorado, así que git no protege ni recupera nada).
+- **Solución**: (1) claves recuperadas del historial local de VSCode (`%APPDATA%\Code\User\History`); (2) todos los docs usan ahora `cp -n` (no-clobber); (3) backup fuera del repo en `C:\Users\ojrap\ecommerce.env.local.backup` — actualizarlo si cambian las claves.
+- **Pendiente**: `STRIPE_WEBHOOK_SECRET` contiene una clave `pk_test_` (error de pegado histórico); el valor correcto es el `whsec_...` que imprime `stripe listen` al arrancar.
+
 <!-- Añadir aquí cada nuevo incidente de ESTE proyecto: problema → causa → solución -->

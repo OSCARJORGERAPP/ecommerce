@@ -10,7 +10,8 @@ npm install
 docker run -d --name ecommerce-mongo -p 27017:27017 mongo:7
 
 # 3. Variables de entorno
-cp .env.example .env.local
+cp -n .env.example .env.local   # -n: no sobrescribir si ya existe
+# PowerShell: if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
 # → rellenar AUTH_SECRET y las claves sk_test_/pk_test_/whsec_ de Stripe
 
 # 4. Seed (productos + usuario admin)
